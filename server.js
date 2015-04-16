@@ -3,9 +3,9 @@ require('babel/register');
 
 
 
-if (process.env.NODE_ENV !== 'development') {
-	require('newrelic');
-}
+// if (process.env.NODE_ENV !== 'development') {
+// 	require('newrelic');
+// }
 
 
 /*
@@ -16,8 +16,8 @@ if (process.env.NODE_ENV !== 'development') {
 
 GLOBAL.paths = require('./config/paths');
 
-const nodeEnv = process.env.NODE_ENV ? process.env.NODE_ENV : 'production';
-const serverPort = process.env.PORT ? process.env.PORT : 3000;
+var nodeEnv = process.env.NODE_ENV ? process.env.NODE_ENV : 'production';
+var serverPort = process.env.PORT ? process.env.PORT : 3003;
 
 
 
@@ -27,8 +27,8 @@ const serverPort = process.env.PORT ? process.env.PORT : 3000;
 *
 */
 
-const express = require('express');
-const app = express();
+var express = require('express');
+var app = express();
 
 
 /*

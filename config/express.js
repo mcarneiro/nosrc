@@ -11,9 +11,9 @@ module.exports = function(app, express) {
 	*
 	*/
 
-	const morgan = require('morgan');
-	const errorHandler = require('errorhandler');
-	const favicon = require('serve-favicon');
+	var morgan = require('morgan');
+	var errorHandler = require('errorhandler');
+	var favicon = require('serve-favicon');
 
 
 	if (app.get('env') === 'development') {

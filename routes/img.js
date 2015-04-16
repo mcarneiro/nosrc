@@ -5,33 +5,40 @@ var zlib = require('zlib');
 
 
 function isInt(n) {
-	return (typeof n === 'number' && n % 1 == 0);
+	return (typeof n === 'number' && n % 1 === 0);
 }
 
 
-function reportToGA(req, width, height) {
-	var referer = req.get('referer');
-	var ua = require('universal-analytics');
-	var uaUUID = (req.cookies && req.cookies.uaUUID) ? req.cookies.uaUUID : null;
-	var visitor = ua('UA-51384-17', uaUUID);
+// function reportToGA(req, width, height) {
+// 	var referer = req.get('referer');
+// 	var ua = require('universal-analytics');
+// 	var uaUUID = (req.cookies && req.cookies.uaUUID) ? req.cookies.uaUUID : null;
+// 	var visitor = ua('UA-51384-17', uaUUID);
 
-	var dims = width + 'x' + height;
+// 	var dims = width + 'x' + height;
 
-	// Visitor#event(category, action, label, value)
-	visitor.event('hotlink', referer, dims).send();
-}
+// 	// Visitor#event(category, action, label, value)
+// 	visitor.event('hotlink', referer, dims).send();
+// }
 
 
 module.exports = function(req, res) {
-	var width = (req.params.width) ? parseInt(req.params.width) : undefined;
-	var height = (req.params.height) ? parseInt(req.params.height) : width;
+	var width = !!req.params.width ? parseInt(req.params.width) : undefined;
+	var style = {
+		width: width,
+		height: !!req.params.height ? parseInt(req.params.height) : width,
+		bg: req.params.bg,
+		fg: req.params.fg,
+		strokeWidth: req.query.sw,
+		text: req.query.t,
+		fontSize: req.query.fs
+	};
 
-	if (!isInt(width) || !isInt(height)) {
+	if (!isInt(style.width) || !isInt(style.height)) {
 		res.status(404);
 		res.send('<h1>Not Found</h1>');
-	}
-	else {
-		img(width, height, function(err, svgString) {
+	} else {
+		img(style, function(err, svgString) {
 			zlib.gzip(svgString, function(err, svgCompressed) {
 				var cacheTime = 60 * 60 * 24 * 7; // 7 Days
 				var expires = new Date(Date.now() + (cacheTime * 1000)).toUTCString();
@@ -44,10 +51,8 @@ module.exports = function(req, res) {
 				});
 
 				res.end(svgCompressed);
-
-				process.nextTick(reportToGA.bind(null, req, width, height));
+				// process.nextTick(reportToGA.bind(null, req, style.width, style.height));
 			});
-
 		});
 	}
 };
